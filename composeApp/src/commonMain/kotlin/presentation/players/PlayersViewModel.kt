@@ -1,9 +1,9 @@
 package presentation.players
 
+import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 class PlayersViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(

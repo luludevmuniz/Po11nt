@@ -20,7 +20,6 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
 import po11nt.composeapp.generated.resources.Res
 import po11nt.composeapp.generated.resources.po11nt_logo
@@ -56,7 +55,6 @@ fun StartContent(
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun AppInfoSide(modifier: Modifier = Modifier) {
     Column(
@@ -127,7 +125,7 @@ fun NewGameSide(
                 bottom = 16.dp
             ),
             onClick = {
-                uriHandler.openUri(uri = "https://github.com/bmaupin/android-pitchpipe/blob/main/metadata/en-US/privacy_policy.txt")
+                uriHandler.openUri(uri = "https://sites.google.com/view/po11nt")
             }
         ) {
             Text(

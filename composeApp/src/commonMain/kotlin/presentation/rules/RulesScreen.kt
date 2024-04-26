@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import domain.model.Player
 import domain.model.ServingSide
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.viewmodel.viewModel
 import presentation.common.DefaultTopAppBar
 import presentation.rules.RulesEvent.*
 import ui.theme.StormGray
@@ -29,13 +29,10 @@ fun RulesScreen(
         startServing: ServingSide
     ) -> Unit
 ) {
-    val viewModel = viewModel(
-        modelClass = RulesViewModel::class,
-        keys = listOf(2)
-    ) {
+    val viewModel = viewModel {
         RulesViewModel()
     }
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             DefaultTopAppBar(

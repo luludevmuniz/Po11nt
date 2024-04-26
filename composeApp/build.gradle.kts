@@ -50,13 +50,13 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
-            implementation(compose.animation)
             implementation(compose.material3)
             implementation(compose.ui)
             implementation(compose.components.resources)
-            implementation(libs.precompose)
-            implementation(libs.precompose.viewmodel)
+            implementation(compose.components.uiToolingPreview)
             implementation(libs.windowsizeclass)
+            implementation(libs.compose.navigation)
+            implementation(libs.compose.lifecycle)
         }
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
@@ -81,7 +81,7 @@ android {
         applicationId = "com.alpaca.po11nt"
         minSdk = libs.versions.android.minSdk.get().toInt()
         targetSdk = libs.versions.android.targetSdk.get().toInt()
-        versionCode = 1
+        versionCode = 3
         versionName = "1.0"
     }
     packaging {

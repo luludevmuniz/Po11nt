@@ -11,8 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.viewmodel.viewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import presentation.common.DefaultTopAppBar
 import presentation.common.PrimaryButton
 import presentation.players.PlayersEvent.OnPlayerOneNameChanged
@@ -29,14 +28,11 @@ fun PlayersScreen(
     onNextButtonClick: (String, String) -> Unit,
     orientation: Orientation
 ) {
-    val viewModel = viewModel(
-        modelClass = PlayersViewModel::class,
-        keys = listOf(1)
-    ) {
+    val viewModel = viewModel {
         PlayersViewModel()
     }
     val buttonText = "PRÓXIMO"
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             DefaultTopAppBar(

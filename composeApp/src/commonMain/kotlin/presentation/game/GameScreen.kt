@@ -6,13 +6,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 import domain.model.Player
 import domain.model.ServingSide
-import moe.tlaster.precompose.flow.collectAsStateWithLifecycle
-import moe.tlaster.precompose.viewmodel.viewModel
 import presentation.game.GameEvent.*
 import presentation.game.dialog.*
 import utils.Orientation
@@ -27,7 +27,7 @@ fun GameScreen(
     startServingSide: ServingSide,
     onFinishClicked: () -> Unit
 ) {
-    val viewModel = viewModel(GameViewModel::class, listOf(3)) {
+    val viewModel = viewModel {
         GameViewModel(
             playerOne = playerOne,
             playerTwo = playerTwo,
@@ -36,7 +36,7 @@ fun GameScreen(
             startServingSide = startServingSide
         )
     }
-    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState = viewModel.uiState.collectAsState()
     val shouldRollback = remember { mutableStateOf(Pair(false, false)) }
 
     Scaffold { paddingValues ->

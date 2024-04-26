@@ -1,10 +1,10 @@
 package presentation.rules
 
+import androidx.lifecycle.ViewModel
 import domain.model.ServingSide
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 class RulesViewModel : ViewModel() {
     private val _uiState = MutableStateFlow(RulesState())

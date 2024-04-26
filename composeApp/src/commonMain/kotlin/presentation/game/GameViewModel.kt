@@ -1,5 +1,6 @@
 package presentation.game
 
+import androidx.lifecycle.ViewModel
 import domain.model.Player
 import domain.model.ServingSide
 import domain.model.ServingSide.Left
@@ -7,7 +8,6 @@ import domain.model.ServingSide.Right
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import moe.tlaster.precompose.viewmodel.ViewModel
 
 class GameViewModel(
     playerOne: Player, playerTwo: Player, startServingSide: ServingSide, maxScore: Int, maxSets: Int
