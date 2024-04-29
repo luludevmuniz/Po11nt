@@ -41,4 +41,5 @@
     <string name="restart_the_game">Do you want to restart the match?</string>
     <string name="swipe_to_increase_score">Swipe to score</string>
     <string name="rewind_score">Rewind score</string>
+    <string name="set_summary">End of the %1$dº set</string>
 </resources>

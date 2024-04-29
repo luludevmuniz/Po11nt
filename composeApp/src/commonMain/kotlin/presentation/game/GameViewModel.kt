@@ -10,7 +10,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class GameViewModel(
-    playerOne: Player, playerTwo: Player, startServingSide: ServingSide, maxScore: Int, maxSets: Int
+    playerOne: Player,
+    playerTwo: Player,
+    startServingSide: ServingSide,
+    maxScore: Int,
+    maxSets: Int
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(
         GameState(
@@ -18,7 +22,8 @@ class GameViewModel(
             playerTwo = playerTwo,
             servingSide = startServingSide,
             maxScore = maxScore,
-            maxSets = maxSets
+            maxSets = maxSets,
+            switchSides = false
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -64,6 +69,7 @@ class GameViewModel(
             GameEvent.OnCloseRulesDialog -> closeRulesDialog()
             GameEvent.OnRestartGame -> restartGame()
             GameEvent.OnCloseSummaryDialog -> closeSummaryDialog()
+            GameEvent.OnSwitchPlayersSides -> switchPlayersSides()
         }
     }
 
@@ -204,10 +210,14 @@ class GameViewModel(
     }
 
     private fun startNextSet() {
-        _setStartServingSide = if (_setStartServingSide == Left) Right else Left
         _uiState.update { state ->
+            val playerOne = state.playerOne
+            val playerTwo = state.playerTwo
             state.copy(
+                playerOne = playerTwo.copy(name = playerOne.name),
+                playerTwo = playerOne.copy(name = playerTwo.name),
                 setEnded = false,
+                switchSides = !state.switchSides,
                 servingSide = _setStartServingSide
             )
         }
@@ -286,5 +296,19 @@ class GameViewModel(
         _uiState.update { state ->
             state.copy(showSummaryDialog = false)
         }
+    }
+
+    private fun switchPlayersSides() {
+        _uiState.update { state ->
+            val playerOne = state.playerOne
+            val playerTwo = state.playerTwo
+            state.copy(
+                playerOne = playerTwo.copy(name = playerOne.name),
+                playerTwo = playerOne.copy(name = playerTwo.name),
+                switchSides = !state.switchSides,
+                servingSide = if (state.servingSide == Left) Right else Left
+            )
+        }
+        _setStartServingSide = if (_setStartServingSide == Left) Right else Left
     }
 }

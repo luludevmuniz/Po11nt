@@ -15,5 +15,6 @@ data class GameState(
     var showPlayersDialog: Boolean = false,
     var showSummaryDialog: Boolean = false,
     var winner: Player? = null,
-    var loser: Player = Player()
+    var loser: Player = Player(),
+    var switchSides: Boolean
 )

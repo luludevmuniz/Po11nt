@@ -7,6 +7,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import domain.model.Player
 import domain.model.ServingSide
 import presentation.game.middle.GameMiddleContent
@@ -20,6 +21,7 @@ fun GameContent(
     maxScore: Int,
     servingSide: ServingSide,
     shouldRollback: MutableState<Pair<Boolean, Boolean>>,
+    switchSides: Boolean,
     onPlayerOneScored: () -> Unit,
     onPlayerTwoScored: () -> Unit,
     onPlayerOneScoreRollback: () -> Unit,
@@ -27,6 +29,7 @@ fun GameContent(
     onShowRestartModal: () -> Unit,
     onShowPlayersDialog: () -> Unit,
     onShowRulesDialog: () -> Unit,
+    onSwitchButtonClick: () -> Unit,
     adaptativeContent: @Composable (
         centerContent: @Composable (Modifier) -> Unit,
         playerOneScoreField: @Composable RowScope.(Float) -> Unit,
@@ -40,24 +43,21 @@ fun GameContent(
                 playerOne = playerOne,
                 playerTwo = playerTwo,
                 servingSide = servingSide,
+                switchSides = switchSides,
                 shouldRollback = shouldRollback,
                 onPlayerOneScored = onPlayerOneScored,
                 onPlayerTwoScored = onPlayerTwoScored,
-                onShowRestartModal = {
-                    onShowRestartModal()
-                },
-                onShowPlayersDialog = {
-                    onShowPlayersDialog()
-                },
-                onShowRulesDialog = {
-                    onShowRulesDialog()
-                }
+                onShowRestartModal = onShowRestartModal,
+                onShowPlayersDialog = onShowPlayersDialog,
+                onShowRulesDialog = onShowRulesDialog,
+                onSwitchButtonClick = onSwitchButtonClick
             )
         },
         {
             PlayerOneScoreField(
                 weight = it,
                 actualScore = playerOne.score,
+                playerColor = playerOne.color ?: MaterialTheme.colorScheme.primaryContainer,
                 maxScore = maxScore,
                 onPlayerOneScored = {
                     onPlayerOneScored()
@@ -71,6 +71,7 @@ fun GameContent(
             PlayerTwoScoreField(
                 weight = it,
                 actualScore = playerTwo.score,
+                playerColor = playerTwo.color ?: MaterialTheme.colorScheme.primaryContainer,
                 maxScore = maxScore,
                 onPlayerTwoScored = {
                     onPlayerTwoScored()
@@ -90,11 +91,13 @@ private fun CenterContent(
     playerTwo: Player,
     servingSide: ServingSide,
     shouldRollback: MutableState<Pair<Boolean, Boolean>>,
+    switchSides: Boolean,
     onShowRestartModal: () -> Unit,
     onShowPlayersDialog: () -> Unit,
     onShowRulesDialog: () -> Unit,
     onPlayerOneScored: () -> Unit,
-    onPlayerTwoScored: () -> Unit
+    onPlayerTwoScored: () -> Unit,
+    onSwitchButtonClick: () -> Unit
 ) {
     Column {
         GameTopContent(
@@ -103,7 +106,9 @@ private fun CenterContent(
             leftSetScore = playerOne.sets,
             rightSetScore = playerTwo.sets,
             leftBoxColor = MaterialTheme.colorScheme.secondaryContainer,
-            rightBoxColor = MaterialTheme.colorScheme.tertiaryContainer
+            rightBoxColor = MaterialTheme.colorScheme.tertiaryContainer,
+            switchSides = switchSides,
+            onSwitchButtonClick = onSwitchButtonClick
         )
 
         GameMiddleContent(
@@ -139,6 +144,7 @@ private fun RowScope.PlayerOneScoreField(
     weight: Float,
     actualScore: Int,
     maxScore: Int,
+    playerColor: Color,
     onPlayerOneScored: () -> Unit,
     onPlayerOneScoreRollback: () -> Unit,
 ) {
@@ -147,7 +153,8 @@ private fun RowScope.PlayerOneScoreField(
             modifier = Modifier.weight(0.2f),
             actualScore = actualScore,
             maxScore = maxScore,
-            scoreBoxColor = MaterialTheme.colorScheme.secondaryContainer
+//            scoreBoxColor = MaterialTheme.colorScheme.secondaryContainer
+            scoreBoxColor = playerColor
         )
         SwipeToIncreaseScore(
             modifier = Modifier.weight(0.8f),
@@ -159,7 +166,7 @@ private fun RowScope.PlayerOneScoreField(
                     onPlayerOneScoreRollback()
                 }
             },
-            playerColor = MaterialTheme.colorScheme.secondaryContainer
+            playerColor = playerColor
         )
     }
 }
@@ -169,6 +176,7 @@ private fun RowScope.PlayerTwoScoreField(
     weight: Float,
     actualScore: Int,
     maxScore: Int,
+    playerColor: Color,
     onPlayerTwoScored: () -> Unit,
     onPlayerTwoScoreRollback: () -> Unit,
 ) {
@@ -183,13 +191,14 @@ private fun RowScope.PlayerTwoScoreField(
                     onPlayerTwoScoreRollback()
                 }
             },
-            playerColor = MaterialTheme.colorScheme.tertiaryContainer
+//            playerColor = MaterialTheme.colorScheme.tertiaryContainer
+            playerColor = playerColor
         )
         ScoreCounter(
             modifier = Modifier.weight(0.2f),
             actualScore = actualScore,
             maxScore = maxScore,
-            scoreBoxColor = MaterialTheme.colorScheme.tertiaryContainer
+            scoreBoxColor = playerColor
         )
     }
 }

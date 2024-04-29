@@ -110,6 +110,7 @@ class GameScreenUiTest {
                 onCloseRestartModal = {
                     viewModel.onEvent(GameEvent.OnCloseRestartModal)
                 },
+                onSwitchButtonClick = {}
             )
         }
     }

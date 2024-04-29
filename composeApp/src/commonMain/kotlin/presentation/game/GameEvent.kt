@@ -20,4 +20,5 @@ sealed interface GameEvent {
     data object OnClosePlayersDialog: GameEvent
     data object OnRestartGame: GameEvent
     data object OnCloseSummaryDialog: GameEvent
+    data object OnSwitchPlayersSides: GameEvent
 }

@@ -1,22 +1,49 @@
 package presentation.game.top
 
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateIntOffsetAsState
+import androidx.compose.animation.core.spring
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.imageResource
+import org.jetbrains.compose.resources.painterResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.ic_switch_arrows_24dp
 
 @Composable
 fun GameTopContent(
@@ -25,7 +52,9 @@ fun GameTopContent(
     leftSetScore: Int,
     rightSetScore: Int,
     leftBoxColor: Color,
-    rightBoxColor: Color
+    rightBoxColor: Color,
+    switchSides: Boolean,
+    onSwitchButtonClick: () -> Unit
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
@@ -36,7 +65,9 @@ fun GameTopContent(
             leftSetScore = leftSetScore,
             rightSetRight = rightSetScore,
             leftBoxColor = leftBoxColor,
-            rightBoxColor = rightBoxColor
+            rightBoxColor = rightBoxColor,
+            switchSides = switchSides,
+            onSwitchButtonClick = onSwitchButtonClick
         )
     }
 }
@@ -48,41 +79,56 @@ private fun PlayersSetScore(
     leftSetScore: Int,
     rightSetRight: Int,
     leftBoxColor: Color,
-    rightBoxColor: Color
+    rightBoxColor: Color,
+    switchSides: Boolean,
+    onSwitchButtonClick: () -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = MaterialTheme.colorScheme.surface)
-    ) {
-        PlayerSetScore(
-            playerName = leftName,
-            setScore = leftSetScore,
-            backgroundColor = leftBoxColor
-        )
-        PlayerSetScore(
-            playerName = rightName,
-            setScore = rightSetRight,
-            backgroundColor = rightBoxColor,
-            reverseLayout = true,
-        )
+    Box(contentAlignment = Alignment.Center) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(color = MaterialTheme.colorScheme.surface)
+        ) {
+            PlayerSetScore(
+                modifier = Modifier.weight(0.5f),
+                playerName = leftName,
+                switchSides = switchSides,
+                setScore = leftSetScore,
+                backgroundColor = leftBoxColor
+            )
+            PlayerSetScore(
+                modifier = Modifier.weight(0.5f),
+                playerName = rightName,
+                switchSides = switchSides,
+                setScore = rightSetRight,
+                backgroundColor = rightBoxColor,
+                reverseLayout = true,
+            )
+        }
+        IconButton(onClick = onSwitchButtonClick) {
+            Icon(
+                painter = painterResource(Res.drawable.ic_switch_arrows_24dp),
+                contentDescription = "Switch sides"
+            )
+        }
     }
 }
 
 @Composable
-private fun RowScope.PlayerSetScore(
+private fun PlayerSetScore(
+    modifier: Modifier,
     playerName: String,
+    switchSides: Boolean,
     setScore: Int,
     backgroundColor: Color,
     reverseLayout: Boolean = false,
 ) {
     var heightState by remember { mutableStateOf(0.dp) }
-    BoxWithConstraints(
-        modifier = Modifier.weight(0.5f)
-    ) {
+    BoxWithConstraints(modifier = modifier) {
         ScoreRow(
             playerName = playerName,
             setScore = setScore,
+            switchSides = switchSides,
             height = heightState,
             backgroundColor = backgroundColor,
             onHeightStateChange = {
@@ -97,20 +143,31 @@ private fun RowScope.PlayerSetScore(
 private fun ScoreRow(
     playerName: String,
     setScore: Int,
+    switchSides: Boolean,
     height: Dp,
     backgroundColor: Color,
     onHeightStateChange: (Dp) -> Unit,
     reverseLayout: Boolean
 ) {
+    var maxWidth by remember {
+        mutableIntStateOf(0)
+    }
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier
+            .fillMaxWidth()
+            .onGloballyPositioned {
+                maxWidth = it.size.width
+            }
     ) {
         val (nameBox, scoreBox) = createSetBoxes(
-            playerName,
-            setScore,
-            height,
-            backgroundColor,
-            onHeightStateChange
+            playerName = playerName,
+            setScore = setScore,
+            switchSides = switchSides,
+            reverseLayout = reverseLayout,
+            height = height,
+            backgroundColor = backgroundColor,
+            onHeightStateChange = onHeightStateChange,
+            maxScreenWidth = maxWidth
         )
         if (reverseLayout) {
             scoreBox()
@@ -123,27 +180,33 @@ private fun ScoreRow(
 }
 
 private fun RowScope.createSetBoxes(
+    modifier: Modifier = Modifier,
     playerName: String,
+    reverseLayout: Boolean,
+    switchSides: Boolean,
     setScore: Int,
     height: Dp,
+    maxScreenWidth: Int,
     backgroundColor: Color,
     onHeightStateChange: (Dp) -> Unit
 ): Pair<@Composable () -> Unit, @Composable () -> Unit> {
     val nameBox: @Composable () -> Unit = {
         PlayerNameBox(
+            modifier = modifier,
             playerName = playerName,
             height = height,
+            switchSides = switchSides,
+            reverseLayout = reverseLayout,
+            maxScreenWidth = maxScreenWidth,
             backgroundColor = backgroundColor
         )
     }
-
     val scoreBox: @Composable () -> Unit = {
         SetBox(
             setScore = setScore,
             onHeightStateChange = onHeightStateChange
         )
     }
-
     return Pair(nameBox, scoreBox)
 }
 
@@ -151,14 +214,35 @@ private fun RowScope.createSetBoxes(
 private fun RowScope.PlayerNameBox(
     modifier: Modifier = Modifier,
     playerName: String,
+    reverseLayout: Boolean,
+    switchSides: Boolean,
     height: Dp,
+    maxScreenWidth: Int,
     backgroundColor: Color
 ) {
+    var componentWidth by remember {
+        mutableIntStateOf(0)
+    }
+    val offset by animateIntOffsetAsState(
+        targetValue = if (switchSides) {
+            IntOffset(maxScreenWidth.times(2) - componentWidth, 0)
+        } else {
+            IntOffset.Zero
+        },
+        animationSpec = spring(Spring.DampingRatioMediumBouncy),
+        label = "offset"
+    )
     Box(
         modifier = modifier
+            .offset {
+                if (reverseLayout) -offset else offset
+            }
+            .onGloballyPositioned {
+                componentWidth = it.size.width
+            }
             .weight(0.59f)
             .height(height)
-            .background(color = backgroundColor)
+            .background(color = backgroundColor.copy(alpha = 0.3f))
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.surfaceContainerLow

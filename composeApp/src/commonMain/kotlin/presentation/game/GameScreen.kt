@@ -15,6 +15,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import domain.model.ServingSide
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.set_summary
 import presentation.game.dialog.PlayersDialog
 import presentation.game.dialog.RestartGameModal
 import presentation.game.dialog.RulesDialog
@@ -47,9 +50,17 @@ fun GameScreen(
     ) -> Unit,
     onCloseRulesDialog: () -> Unit,
     onRestartGameClicked: () -> Unit,
-    onCloseRestartModal: () -> Unit
+    onCloseRestartModal: () -> Unit,
+    onSwitchButtonClick: () -> Unit
 ) {
-    val shouldRollback = remember { mutableStateOf(Pair(false, false)) }
+    val shouldRollback = remember {
+        mutableStateOf(
+            Pair(
+                false,
+                false
+            )
+        )
+    }
     Scaffold { paddingValues ->
         GameContent(
             playerOne = uiState.playerOne,
@@ -57,13 +68,15 @@ fun GameScreen(
             maxScore = uiState.maxScore,
             servingSide = uiState.servingSide,
             shouldRollback = shouldRollback,
-            onShowRestartModal = { onShowRestartModal() },
-            onShowPlayersDialog = { onShowPlayersDialog() },
-            onShowRulesDialog = { onShowRulesDialog() },
-            onPlayerOneScored = { onPlayerOneScored() },
-            onPlayerTwoScored = { onPlayerTwoScored() },
-            onPlayerOneScoreRollback = { onPlayerOneScoreRollback() },
-            onPlayerTwoScoreRollback = { onPlayerTwoScoreRollback() }
+            switchSides = uiState.switchSides,
+            onShowRestartModal = onShowRestartModal,
+            onShowPlayersDialog = onShowPlayersDialog,
+            onShowRulesDialog = onShowRulesDialog,
+            onPlayerOneScored = onPlayerOneScored,
+            onPlayerTwoScored = onPlayerTwoScored,
+            onPlayerOneScoreRollback = onPlayerOneScoreRollback,
+            onPlayerTwoScoreRollback = onPlayerTwoScoreRollback,
+            onSwitchButtonClick = onSwitchButtonClick
         ) { centerContent,
             playerOneScoreField,
             playerTwoScoreField ->
@@ -107,10 +120,13 @@ fun GameScreen(
 
         if (uiState.setEnded) {
             SetEndDialog(
-                title = "Fim do ${(uiState.playerOne.sets + uiState.playerTwo.sets).plus(1)}º set",
-                onContinueClicked = { onStartNextSet() },
-                onEndGameClicked = { onEndGameClicked() },
-                onDismissRequest = { onCloseEndDialog() },
+                title = stringResource(
+                    Res.string.set_summary,
+                    uiState.playerOne.sets + uiState.playerTwo.sets
+                ),
+                onContinueClicked = onStartNextSet,
+                onEndGameClicked = onEndGameClicked,
+                onDismissRequest = onCloseEndDialog,
             )
         }
 
@@ -136,7 +152,7 @@ fun GameScreen(
                 onSaveClick = { playerOneName, playerTwoName ->
                     onChangePlayersNames(playerOneName, playerTwoName)
                 },
-                onDismissRequest = { onClosePlayersDialog() }
+                onDismissRequest = onClosePlayersDialog
             )
         }
 
@@ -150,7 +166,7 @@ fun GameScreen(
                 maxSets = uiState.maxSets,
                 maxScore = uiState.maxScore,
                 servingSide = uiState.servingSide,
-                onDismissRequest = { onCloseRulesDialog() },
+                onDismissRequest = onCloseRulesDialog,
                 onSaveClick = { sets, score, servingSide ->
                     onChangeRules(sets, score, servingSide)
                 }
@@ -159,12 +175,12 @@ fun GameScreen(
 
         if (uiState.showRestartModal) {
             RestartGameModal(
-                onRestartClicked = { onRestartGameClicked() },
+                onRestartClicked = onRestartGameClicked,
                 onFinishClicked = {
                     onFinishClicked()
                     onCloseRestartModal()
                 },
-                onDismissRequest = { onCloseRestartModal() }
+                onDismissRequest = onCloseRestartModal
             )
         }
     }

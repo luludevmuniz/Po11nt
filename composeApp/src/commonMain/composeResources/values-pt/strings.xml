@@ -36,10 +36,10 @@
     <string name="done_button">CONCLUIR</string>
     <string name="continue_button">CONTINUAR</string>
     <string name="end_match">ENCERRAR PARTIDA</string>
-    <string name="end_match">ENCERRAR PARTIDA</string>
     <string name="exit_button">SAIR</string>
     <string name="reset_counter">ZERAR CONTADOR</string>
     <string name="restart_the_game">Quer reiniciar a partida?</string>
     <string name="swipe_to_increase_score">Arraste para incrementar ponto</string>
     <string name="rewind_score">Retroceder ponto</string>
+    <string name="set_summary">Fim do %1$dº set</string>
 </resources>

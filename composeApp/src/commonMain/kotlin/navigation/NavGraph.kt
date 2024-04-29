@@ -2,6 +2,7 @@ package navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
@@ -19,23 +20,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import domain.model.Player
 import domain.model.ServingSide.Left
-import presentation.game.GameEvent.OnClosePlayersDialog
-import presentation.game.GameEvent.OnCloseRestartModal
-import presentation.game.GameEvent.OnCloseRulesDialog
-import presentation.game.GameEvent.OnCloseSummaryDialog
-import presentation.game.GameEvent.OnFinishGame
-import presentation.game.GameEvent.OnMaxScoreChange
-import presentation.game.GameEvent.OnMaxSetsChange
-import presentation.game.GameEvent.OnPlayerOneNameChange
-import presentation.game.GameEvent.OnPlayerOneScoreChange
-import presentation.game.GameEvent.OnPlayerTwoNameChange
-import presentation.game.GameEvent.OnPlayerTwoScoreChange
-import presentation.game.GameEvent.OnRestartGame
-import presentation.game.GameEvent.OnServingSideChange
-import presentation.game.GameEvent.OnShowPlayersDialog
-import presentation.game.GameEvent.OnShowRestartModal
-import presentation.game.GameEvent.OnShowRulesDialog
-import presentation.game.GameEvent.OnStartNextSet
+import presentation.game.GameEvent
+import presentation.game.GameEvent.*
 import presentation.game.GameScreen
 import presentation.game.GameViewModel
 import presentation.players.PlayersEvent
@@ -263,11 +249,13 @@ fun SetupNavGraph(navController: NavHostController) {
                 )
             }
         ) {
+            val playerOneColor = MaterialTheme.colorScheme.secondaryContainer
+            val playerTwoColor = MaterialTheme.colorScheme.tertiaryContainer
             val viewModel by remember {
                 mutableStateOf(
                     GameViewModel(
-                        playerOne = playerOne,
-                        playerTwo = playerTwo,
+                        playerOne = playerOne.copy(color = playerOneColor),
+                        playerTwo = playerTwo.copy(color = playerTwoColor),
                         maxScore = initialMaxScore,
                         maxSets = initialMaxSets,
                         startServingSide = startServingSide
@@ -349,6 +337,9 @@ fun SetupNavGraph(navController: NavHostController) {
                 onCloseRestartModal = {
                     viewModel.onEvent(OnCloseRestartModal)
                 },
+                onSwitchButtonClick = {
+                    viewModel.onEvent(OnSwitchPlayersSides)
+                }
             )
         }
     }
