@@ -14,7 +14,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ui.theme.BlackPearl
 
 @Composable
 internal fun Scoreboard(
@@ -70,7 +69,7 @@ private fun RowScope.ScoreBox(
             .weight(0.5f)
             .border(
                 width = 0.5.dp,
-                color = BlackPearl
+                color = MaterialTheme.colorScheme.surfaceContainerLow
             ),
         contentAlignment = Alignment.Center
     ) {

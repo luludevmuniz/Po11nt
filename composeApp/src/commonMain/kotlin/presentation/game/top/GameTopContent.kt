@@ -17,7 +17,6 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ui.theme.BlackPearl
 
 @Composable
 fun GameTopContent(
@@ -158,11 +157,11 @@ private fun RowScope.PlayerNameBox(
     Box(
         modifier = modifier
             .weight(0.59f)
-            .height(height)  // set the height of the first box
+            .height(height)
             .background(color = backgroundColor)
             .border(
                 width = 1.dp,
-                color = BlackPearl
+                color = MaterialTheme.colorScheme.surfaceContainerLow
             ),
         contentAlignment = Alignment.Center
     ) {
@@ -185,7 +184,7 @@ private fun RowScope.SetBox(
             .weight(0.49f)
             .border(
                 width = 1.dp,
-                color = BlackPearl
+                color = MaterialTheme.colorScheme.surfaceContainerLow
             )
             .wrapContentWidth(),
         content = {

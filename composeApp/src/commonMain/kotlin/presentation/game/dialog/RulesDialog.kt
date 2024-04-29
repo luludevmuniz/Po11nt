@@ -2,14 +2,19 @@ package presentation.game.dialog
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import domain.model.Player
 import domain.model.ServingSide
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.currently_serving
+import po11nt.composeapp.generated.resources.rules_top_app_bar_title
+import po11nt.composeapp.generated.resources.save_button
 import presentation.common.FullScreenDialog
 import presentation.rules.RulesContent
-import ui.theme.StormGray
 import utils.Orientation
 import utils.Orientation.Horizontal
 import utils.Orientation.Vertical
@@ -38,7 +43,7 @@ fun RulesDialog(
         mutableStateOf(servingSide)
     }
     FullScreenDialog(
-        title = "Regras da disputa",
+        title = stringResource(Res.string.rules_top_app_bar_title),
         onDismissRequest = {
             onDismissRequest()
         }
@@ -49,8 +54,8 @@ fun RulesDialog(
             maxSets = updatedMaxSets,
             maxScore = updatedMaxScore,
             startServing = updatedServingSide,
-            buttonText = "SALVAR",
-            servingText = "Sacando agora",
+            buttonText = stringResource(Res.string.save_button),
+            servingText = stringResource(Res.string.currently_serving),
             onButtonClick = { maxSets, maxScore, startServing ->
                 onSaveClick(
                     maxSets,
@@ -65,7 +70,7 @@ fun RulesDialog(
                             .fillMaxHeight()
                             .padding(horizontal = 16.dp)
                             .width(1.dp)
-                            .background(color = StormGray)
+                            .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                     )
                 }
             },

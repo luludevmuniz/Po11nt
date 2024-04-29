@@ -19,8 +19,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import ui.theme.BlackPearl
-import ui.theme.DarkCharcoal
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.close
 
 @Composable
 fun DefaultDialogContent(
@@ -34,12 +35,11 @@ fun DefaultDialogContent(
 ) {
     Column(
         modifier = modifier
-            .background(color = BlackPearl)
+            .background(color = MaterialTheme.colorScheme.surfaceContainer)
             .padding(
                 horizontal = 16.dp,
                 vertical = 24.dp
-            )
-        ,
+            ),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         Row(
@@ -60,7 +60,7 @@ fun DefaultDialogContent(
             ) {
                 Icon(
                     imageVector = Icons.Default.Close,
-                    contentDescription = "Fechar",
+                    contentDescription = stringResource(Res.string.close),
                     tint = MaterialTheme.colorScheme.onSurface
                 )
             }
@@ -82,7 +82,7 @@ fun DefaultDialogContent(
                 style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.primary,
                 textAlign = TextAlign.Start,
-                )
+            )
         }
         PrimaryButton(
             modifier = Modifier
@@ -95,7 +95,7 @@ fun DefaultDialogContent(
                 modifier = Modifier.fillMaxWidth(),
                 text = primaryButtonTitle,
                 style = MaterialTheme.typography.titleMedium,
-                color = DarkCharcoal,
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
                 textAlign = TextAlign.Start
             )
         }

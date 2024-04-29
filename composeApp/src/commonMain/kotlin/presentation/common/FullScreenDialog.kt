@@ -19,6 +19,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.close
 
 @Composable
 fun FullScreenDialog(
@@ -61,7 +64,7 @@ fun FullScreenDialog(
                 ) {
                     Icon(
                         imageVector = Icons.Default.Close,
-                        contentDescription = "Fechar",
+                        contentDescription = stringResource(Res.string.close),
                         tint = MaterialTheme.colorScheme.onSurface
                     )
                 }

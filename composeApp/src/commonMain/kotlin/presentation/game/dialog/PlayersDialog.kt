@@ -8,10 +8,15 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.player_one
+import po11nt.composeapp.generated.resources.player_two
+import po11nt.composeapp.generated.resources.players_top_app_bar_title
+import po11nt.composeapp.generated.resources.save_button
 import presentation.common.FullScreenDialog
 import presentation.common.PrimaryButton
 import presentation.players.PlayersContent
-import ui.theme.StormGray
 import utils.Orientation
 
 @Composable
@@ -28,9 +33,10 @@ fun PlayersDialog(
     var updatedPlayerTwoName by remember {
         mutableStateOf(playerTwoName)
     }
-    val buttonText = "SALVAR"
+    val playerOneDefaultName = stringResource(Res.string.player_one)
+    val playerTwoDefaultName = stringResource(Res.string.player_two)
     FullScreenDialog(
-        title = "Jogadores da partida",
+        title = stringResource(Res.string.players_top_app_bar_title),
         onDismissRequest = { onDismissRequest() }
     ) {
         PlayersContent(
@@ -61,15 +67,15 @@ fun PlayersDialog(
                                 .align(Alignment.End),
                             content = {
                                 Text(
-                                    text = buttonText,
+                                    text = stringResource(Res.string.save_button),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
                             },
                             onClick = {
                                 onSaveClick(
-                                    updatedPlayerOneName.ifBlank { "Player 1" },
-                                    updatedPlayerTwoName.ifBlank { "Player 2" }
+                                    updatedPlayerOneName.ifBlank { playerOneDefaultName },
+                                    updatedPlayerTwoName.ifBlank { playerTwoDefaultName }
                                 )
                             }
                         )
@@ -97,20 +103,20 @@ fun PlayersDialog(
                                     .fillMaxHeight()
                                     .padding(horizontal = 8.dp)
                                     .width(1.dp)
-                                    .background(color = StormGray)
+                                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                             )
                             PrimaryButton(
                                 content = {
                                     Text(
-                                        text = buttonText,
+                                        text = stringResource(Res.string.save_button),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                 },
                                 onClick = {
                                     onSaveClick(
-                                        updatedPlayerOneName.ifBlank { "Player 1" },
-                                        updatedPlayerTwoName.ifBlank { "Player 2" }
+                                        updatedPlayerOneName.ifBlank { playerOneDefaultName },
+                                        updatedPlayerTwoName.ifBlank { playerTwoDefaultName }
                                     )
                                 }
                             )

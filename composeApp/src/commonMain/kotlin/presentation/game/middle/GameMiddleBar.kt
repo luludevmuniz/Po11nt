@@ -1,14 +1,23 @@
 package presentation.game.middle
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -17,18 +26,21 @@ import androidx.compose.ui.unit.dp
 import domain.model.ServingSide
 import domain.model.ServingSide.Left
 import domain.model.ServingSide.Right
-import org.jetbrains.compose.resources.ExperimentalResourceApi
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.painterResource
-import po11nt.composeapp.generated.resources.*
+import org.jetbrains.compose.resources.stringResource
 import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.currently_serving
+import po11nt.composeapp.generated.resources.game_rules
 import po11nt.composeapp.generated.resources.ic_rollback
+import po11nt.composeapp.generated.resources.ic_tenis
 import po11nt.composeapp.generated.resources.ic_user_settings
 import po11nt.composeapp.generated.resources.ic_whistle
-import ui.theme.BlackPearl
-import ui.theme.DarkGrayBlue
-import ui.theme.StormGray
+import po11nt.composeapp.generated.resources.players_settings
+import po11nt.composeapp.generated.resources.receiver
+import po11nt.composeapp.generated.resources.restart_game
+import po11nt.composeapp.generated.resources.service
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 internal fun GameMiddleBar(
     servingSide: ServingSide,
@@ -41,15 +53,36 @@ internal fun GameMiddleBar(
             .fillMaxWidth()
             .border(
                 width = 1.dp,
-                color = BlackPearl
+                color = MaterialTheme.colorScheme.surfaceContainerLow
             )
             .padding(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        if (servingSide == Left) {
-            ServingText()
-        } else {
-            ReceivingText()
+        AnimatedContent(
+            modifier = Modifier.weight(0.25f),
+            targetState = servingSide,
+            transitionSpec = {
+                slideInHorizontally(animationSpec = tween(200)) {
+                    if (this.targetState == Left)
+                        -it
+                    else
+                        it
+                } togetherWith slideOutHorizontally(animationSpec = tween(200)) {
+                    if (this.targetState == Left)
+                        it
+                    else
+                        -it
+                }
+            }
+        ) {
+            LaunchedEffect(Unit) {
+                delay(200)
+            }
+            if (servingSide == Left) {
+                ServingText()
+            } else {
+                ReceivingText()
+            }
         }
         Row(
             modifier = Modifier
@@ -64,64 +97,82 @@ internal fun GameMiddleBar(
             Icon(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(color = DarkGrayBlue)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                     .padding(8.dp)
                     .clickable {
                         onShowRestartModal()
                     },
                 painter = painterResource(Res.drawable.ic_rollback),
-                contentDescription = "Reiniciar partida",
+                contentDescription = stringResource(Res.string.restart_game),
                 tint = MaterialTheme.colorScheme.onSurface
             )
             Icon(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(color = DarkGrayBlue)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                     .padding(8.dp)
                     .clickable {
                         onShowRulesDialog()
                     },
                 painter = painterResource(Res.drawable.ic_whistle),
-                contentDescription = "Regras da partida",
-                tint = MaterialTheme.colorScheme.primary
+                contentDescription = stringResource(Res.string.game_rules),
+                tint = MaterialTheme.colorScheme.inversePrimary
             )
             Icon(
                 modifier = Modifier
                     .clip(CircleShape)
-                    .background(color = DarkGrayBlue)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                     .padding(8.dp)
                     .clickable {
                         onShowPlayersDialog()
                     },
                 painter = painterResource(Res.drawable.ic_user_settings),
-                contentDescription = "Configurações dos jogadores",
+                contentDescription = stringResource(Res.string.players_settings),
                 tint = MaterialTheme.colorScheme.onSurface
             )
         }
-        if (servingSide == Right) {
-            ServingText()
-        } else {
-            ReceivingText()
+        AnimatedContent(
+            modifier = Modifier.weight(0.25f),
+            targetState = servingSide,
+            transitionSpec = {
+                slideInHorizontally(animationSpec = tween(200)) {
+                    if (this.targetState == Right)
+                        it
+                    else
+                        -it
+                } togetherWith slideOutHorizontally(animationSpec = tween(200)) {
+                    if (this.targetState == Right)
+                        -it
+                    else
+                        it
+                }
+            }
+        ) {
+            LaunchedEffect(Unit) {
+                delay(200)
+            }
+            if (it == Right) {
+                ServingText()
+            } else {
+                ReceivingText()
+            }
         }
     }
 }
 
 @Composable
-private fun RowScope.ReceivingText() {
+private fun ReceivingText() {
     Text(
-        modifier = Modifier.weight(0.25f),
-        text = "Receptor",
+        text = stringResource(Res.string.receiver),
         style = MaterialTheme.typography.labelMedium,
-        color = StormGray,
+        color = MaterialTheme.colorScheme.onSurface,
         textAlign = TextAlign.Center
     )
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
-private fun RowScope.ServingText() {
+private fun ServingText() {
     Row(
-        modifier = Modifier.weight(0.25f),
         horizontalArrangement = Arrangement.spacedBy(
             space = 2.dp,
             alignment = Alignment.CenterHorizontally
@@ -129,13 +180,13 @@ private fun RowScope.ServingText() {
         verticalAlignment = Alignment.CenterVertically
     ) {
         Text(
-            text = "Serviço",
+            text = stringResource(Res.string.service),
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
         Icon(
             painter = painterResource(Res.drawable.ic_tenis),
-            contentDescription = "Change game rules",
+            contentDescription = stringResource(Res.string.currently_serving),
             tint = MaterialTheme.colorScheme.primary
         )
     }

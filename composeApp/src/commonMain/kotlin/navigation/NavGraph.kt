@@ -2,19 +2,48 @@ package navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInVertically
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
 import androidx.compose.material3.windowsizeclass.WindowHeightSizeClass
 import androidx.compose.material3.windowsizeclass.calculateWindowSizeClass
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import domain.model.Player
 import domain.model.ServingSide.Left
+import presentation.game.GameEvent.OnClosePlayersDialog
+import presentation.game.GameEvent.OnCloseRestartModal
+import presentation.game.GameEvent.OnCloseRulesDialog
+import presentation.game.GameEvent.OnCloseSummaryDialog
+import presentation.game.GameEvent.OnFinishGame
+import presentation.game.GameEvent.OnMaxScoreChange
+import presentation.game.GameEvent.OnMaxSetsChange
+import presentation.game.GameEvent.OnPlayerOneNameChange
+import presentation.game.GameEvent.OnPlayerOneScoreChange
+import presentation.game.GameEvent.OnPlayerTwoNameChange
+import presentation.game.GameEvent.OnPlayerTwoScoreChange
+import presentation.game.GameEvent.OnRestartGame
+import presentation.game.GameEvent.OnServingSideChange
+import presentation.game.GameEvent.OnShowPlayersDialog
+import presentation.game.GameEvent.OnShowRestartModal
+import presentation.game.GameEvent.OnShowRulesDialog
+import presentation.game.GameEvent.OnStartNextSet
 import presentation.game.GameScreen
+import presentation.game.GameViewModel
+import presentation.players.PlayersEvent
 import presentation.players.PlayersScreen
+import presentation.players.PlayersViewModel
+import presentation.rules.RulesEvent
 import presentation.rules.RulesScreen
+import presentation.rules.RulesViewModel
 import presentation.start.StartScreen
 import utils.Orientation
 
@@ -44,10 +73,10 @@ fun SetupNavGraph(navController: NavHostController) {
     val playerTwo = remember {
         Player()
     }
-    var initalMaxSets by remember {
+    var initialMaxSets by remember {
         mutableIntStateOf(0)
     }
-    var initalMaxScore by remember {
+    var initialMaxScore by remember {
         mutableIntStateOf(0)
     }
     var startServingSide by remember {
@@ -116,6 +145,9 @@ fun SetupNavGraph(navController: NavHostController) {
                 )
             }
         ) {
+            val viewModel = viewModel {
+                PlayersViewModel()
+            }
             PlayersScreen(
                 onNavigationIconClick = {
                     navController.popBackStack()
@@ -124,6 +156,13 @@ fun SetupNavGraph(navController: NavHostController) {
                     playerOne.name = playerOneName.ifBlank { "Player 1" }
                     playerTwo.name = playerTwoName.ifBlank { "Player 2" }
                     navController.navigate(Screen.Rules.route)
+                },
+                uiState = viewModel.uiState.collectAsState().value,
+                onPlayerOneNameChanged = { name ->
+                    viewModel.onEvent(PlayersEvent.OnPlayerOneNameChanged(name))
+                },
+                onPlayerTwoNameChanged = { name ->
+                    viewModel.onEvent(PlayersEvent.OnPlayerTwoNameChanged(name))
                 },
                 orientation = orientation
             )
@@ -155,18 +194,43 @@ fun SetupNavGraph(navController: NavHostController) {
                 )
             }
         ) {
+            val viewModel = viewModel {
+                RulesViewModel()
+            }
             RulesScreen(
                 players = listOf(
                     playerOne,
                     playerTwo
                 ),
+                uiState = viewModel.uiState.collectAsState().value,
+                onMaxSetsCounterChange = { sets ->
+                    viewModel.onEvent(
+                        RulesEvent.OnMaxSetsCounterChange(
+                            sets
+                        )
+                    )
+                },
+                onMaxScoreCounterChange = { score ->
+                    viewModel.onEvent(
+                        RulesEvent.OnMaxScoreCounterChange(
+                            score
+                        )
+                    )
+                },
+                onWhoStartServingChange = { servingSide ->
+                    viewModel.onEvent(
+                        RulesEvent.OnWhoStartServingChange(
+                            servingSide
+                        )
+                    )
+                },
                 orientation = orientation,
                 onNavigationIconClick = {
                     navController.popBackStack()
                 },
                 onNextButtonClick = { maxSets, maxScore, servingSide ->
-                    initalMaxSets = maxSets
-                    initalMaxScore = maxScore
+                    initialMaxSets = maxSets
+                    initialMaxScore = maxScore
                     startServingSide = servingSide
                     navController.navigate(Screen.Game.route)
                 }
@@ -197,21 +261,94 @@ fun SetupNavGraph(navController: NavHostController) {
                     AnimatedContentTransitionScope.SlideDirection.Right,
                     animationSpec = tween(animDuration)
                 )
-            }) {
+            }
+        ) {
+            val viewModel by remember {
+                mutableStateOf(
+                    GameViewModel(
+                        playerOne = playerOne,
+                        playerTwo = playerTwo,
+                        maxScore = initialMaxScore,
+                        maxSets = initialMaxSets,
+                        startServingSide = startServingSide
+                    )
+                )
+            }
             GameScreen(
-                playerOne = playerOne,
-                playerTwo = playerTwo,
+                uiState = viewModel.uiState.collectAsState().value,
                 orientation = orientation,
-                initalMaxScore = initalMaxScore,
-                initalMaxSets = initalMaxSets,
-                startServingSide = startServingSide,
                 onFinishClicked = {
                     navController.popBackStack(
                         route = Screen.Start.route,
                         inclusive = false,
                         saveState = false
                     )
-                }
+                },
+                onShowRestartModal = {
+                    viewModel.onEvent(OnShowRestartModal)
+                },
+                onShowPlayersDialog = {
+                    viewModel.onEvent(OnShowPlayersDialog)
+                },
+                onShowRulesDialog = {
+                    viewModel.onEvent(OnShowRulesDialog)
+                },
+                onPlayerOneScored = {
+                    viewModel.onEvent(
+                        OnPlayerOneScoreChange(viewModel.uiState.value.playerOne.score.plus(1))
+                    )
+                },
+                onPlayerTwoScored = {
+                    viewModel.onEvent(
+                        OnPlayerTwoScoreChange(viewModel.uiState.value.playerTwo.score.plus(1))
+                    )
+                },
+                onPlayerOneScoreRollback = {
+                    viewModel.onEvent(
+                        OnPlayerOneScoreChange(viewModel.uiState.value.playerOne.score.minus(1))
+                    )
+                },
+                onPlayerTwoScoreRollback = {
+                    viewModel.onEvent(
+                        OnPlayerTwoScoreChange(viewModel.uiState.value.playerTwo.score.minus(1))
+                    )
+                },
+                onStartNextSet = {
+                    viewModel.onEvent(OnStartNextSet)
+                },
+                onEndGameClicked = {
+                    viewModel.onEvent(OnFinishGame)
+                },
+                onCloseEndDialog = {
+                    viewModel.onEvent(OnStartNextSet)
+                },
+                onCloseSummaryDialog = {
+                    viewModel.onEvent(OnCloseSummaryDialog)
+                },
+                onChangePlayersNames = { playerOneName, playerTwoName ->
+                    viewModel.onEvent(OnPlayerOneNameChange(playerOneName))
+                    viewModel.onEvent(OnPlayerTwoNameChange(playerTwoName))
+                    viewModel.onEvent(OnClosePlayersDialog)
+                },
+                onClosePlayersDialog = {
+                    viewModel.onEvent(OnClosePlayersDialog)
+                },
+                onChangeRules = { sets, score, servingSide ->
+                    viewModel.onEvent(OnMaxSetsChange(sets))
+                    viewModel.onEvent(OnMaxScoreChange(score))
+                    viewModel.onEvent(OnServingSideChange(servingSide))
+                    viewModel.onEvent(OnCloseRulesDialog)
+                },
+                onCloseRulesDialog = {
+                    viewModel.onEvent(OnCloseRulesDialog)
+                },
+                onRestartGameClicked = {
+                    viewModel.onEvent(OnRestartGame)
+                    viewModel.onEvent(OnCloseRestartModal)
+                },
+                onCloseRestartModal = {
+                    viewModel.onEvent(OnCloseRestartModal)
+                },
             )
         }
     }

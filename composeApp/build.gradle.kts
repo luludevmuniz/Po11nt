@@ -18,7 +18,7 @@ kotlin {
         }
         binaries.executable()
     }
-    
+
     androidTarget {
         compilations.all {
             kotlinOptions {
@@ -26,7 +26,8 @@ kotlin {
             }
         }
     }
-    
+    task("testClasses")
+
     jvm("desktop")
     
     listOf(

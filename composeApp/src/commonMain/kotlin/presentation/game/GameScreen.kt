@@ -1,80 +1,69 @@
 package presentation.game
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewmodel.compose.viewModel
-import domain.model.Player
 import domain.model.ServingSide
-import presentation.game.GameEvent.*
-import presentation.game.dialog.*
+import presentation.game.dialog.PlayersDialog
+import presentation.game.dialog.RestartGameModal
+import presentation.game.dialog.RulesDialog
+import presentation.game.dialog.SetEndDialog
+import presentation.game.dialog.SummaryDialog
 import utils.Orientation
 
 @Composable
 fun GameScreen(
+    uiState: GameState,
     orientation: Orientation,
-    playerOne: Player,
-    playerTwo: Player,
-    initalMaxSets: Int,
-    initalMaxScore: Int,
-    startServingSide: ServingSide,
-    onFinishClicked: () -> Unit
+    onFinishClicked: () -> Unit,
+    onPlayerOneScored: () -> Unit,
+    onPlayerTwoScored: () -> Unit,
+    onPlayerOneScoreRollback: () -> Unit,
+    onPlayerTwoScoreRollback: () -> Unit,
+    onShowRestartModal: () -> Unit,
+    onShowPlayersDialog: () -> Unit,
+    onShowRulesDialog: () -> Unit,
+    onStartNextSet: () -> Unit,
+    onEndGameClicked: () -> Unit,
+    onCloseEndDialog: () -> Unit,
+    onCloseSummaryDialog: () -> Unit,
+    onChangePlayersNames: (String, String) -> Unit,
+    onClosePlayersDialog: () -> Unit,
+    onChangeRules: (
+        maxSets: Int,
+        maxScore: Int,
+        servingSide: ServingSide
+    ) -> Unit,
+    onCloseRulesDialog: () -> Unit,
+    onRestartGameClicked: () -> Unit,
+    onCloseRestartModal: () -> Unit
 ) {
-    val viewModel = viewModel {
-        GameViewModel(
-            playerOne = playerOne,
-            playerTwo = playerTwo,
-            maxScore = initalMaxScore,
-            maxSets = initalMaxSets,
-            startServingSide = startServingSide
-        )
-    }
-    val uiState = viewModel.uiState.collectAsState()
     val shouldRollback = remember { mutableStateOf(Pair(false, false)) }
-
     Scaffold { paddingValues ->
         GameContent(
-            playerOne = uiState.value.playerOne,
-            playerTwo = uiState.value.playerTwo,
-            maxScore = uiState.value.maxScore,
-            servingSide = uiState.value.servingSide,
+            playerOne = uiState.playerOne,
+            playerTwo = uiState.playerTwo,
+            maxScore = uiState.maxScore,
+            servingSide = uiState.servingSide,
             shouldRollback = shouldRollback,
-            onShowRestartModal = {
-                viewModel.onEvent(OnShowRestartModal)
-            },
-            onShowPlayersDialog = {
-                viewModel.onEvent(OnShowPlayersDialog)
-            },
-            onShowRulesDialog = {
-                viewModel.onEvent(OnShowRulesDialog)
-            },
-            onPlayerOneScored = {
-                viewModel.onEvent(
-                    OnPlayerOneScoreChange(uiState.value.playerOne.score.plus(1))
-                )
-            },
-            onPlayerTwoScored = {
-                viewModel.onEvent(
-                    OnPlayerTwoScoreChange(uiState.value.playerTwo.score.plus(1))
-                )
-            },
-            onPlayerOneScoreRollback = {
-                viewModel.onEvent(
-                    OnPlayerOneScoreChange(uiState.value.playerOne.score.minus(1))
-                )
-            },
-            onPlayerTwoScoreRollback = {
-                viewModel.onEvent(
-                    OnPlayerTwoScoreChange(uiState.value.playerTwo.score.minus(1))
-                )
-            }
+            onShowRestartModal = { onShowRestartModal() },
+            onShowPlayersDialog = { onShowPlayersDialog() },
+            onShowRulesDialog = { onShowRulesDialog() },
+            onPlayerOneScored = { onPlayerOneScored() },
+            onPlayerTwoScored = { onPlayerTwoScored() },
+            onPlayerOneScoreRollback = { onPlayerOneScoreRollback() },
+            onPlayerTwoScoreRollback = { onPlayerTwoScoreRollback() }
         ) { centerContent,
             playerOneScoreField,
             playerTwoScoreField ->
@@ -116,28 +105,22 @@ fun GameScreen(
             }
         }
 
-        if (uiState.value.setEnded) {
+        if (uiState.setEnded) {
             SetEndDialog(
-                title = "Fim do ${(playerOne.sets + playerTwo.sets).plus(1)}º set",
-                onContinueClicked = {
-                    viewModel.onEvent(OnStartNextSet)
-                },
-                onEndGameClicked = {
-                    viewModel.onEvent(OnFinishGame)
-                },
-                onDismissRequest = {
-                    viewModel.onEvent(OnStartNextSet)
-                },
+                title = "Fim do ${(uiState.playerOne.sets + uiState.playerTwo.sets).plus(1)}º set",
+                onContinueClicked = { onStartNextSet() },
+                onEndGameClicked = { onEndGameClicked() },
+                onDismissRequest = { onCloseEndDialog() },
             )
         }
 
-        if (uiState.value.showSummaryDialog) {
-            if (uiState.value.winner != null) {
+        if (uiState.showSummaryDialog) {
+            if (uiState.winner != null) {
                 SummaryDialog(
-                    winner = uiState.value.winner!!,
-                    loser = uiState.value.loser
+                    winner = uiState.winner!!,
+                    loser = uiState.loser
                 ) {
-                    viewModel.onEvent(OnCloseSummaryDialog)
+                    onCloseSummaryDialog()
                     onFinishClicked()
                 }
             } else {
@@ -145,57 +128,43 @@ fun GameScreen(
             }
         }
 
-        if (uiState.value.showPlayersDialog) {
+        if (uiState.showPlayersDialog) {
             PlayersDialog(
                 orientation = orientation,
-                playerOneName = uiState.value.playerOne.name,
-                playerTwoName = uiState.value.playerTwo.name,
+                playerOneName = uiState.playerOne.name,
+                playerTwoName = uiState.playerTwo.name,
                 onSaveClick = { playerOneName, playerTwoName ->
-                    viewModel.onEvent(OnPlayerOneNameChange(playerOneName))
-                    viewModel.onEvent(OnPlayerTwoNameChange(playerTwoName))
-                    viewModel.onEvent(OnClosePlayersDialog)
+                    onChangePlayersNames(playerOneName, playerTwoName)
                 },
-                onDismissRequest = {
-                    viewModel.onEvent(OnClosePlayersDialog)
-                }
+                onDismissRequest = { onClosePlayersDialog() }
             )
         }
 
-        if (uiState.value.showRulesDialog) {
+        if (uiState.showRulesDialog) {
             RulesDialog(
                 orientation = orientation,
                 players = listOf(
-                    uiState.value.playerOne,
-                    uiState.value.playerTwo
+                    uiState.playerOne,
+                    uiState.playerTwo
                 ),
-                maxSets = uiState.value.maxSets,
-                maxScore = uiState.value.maxScore,
-                servingSide = uiState.value.servingSide,
-                onDismissRequest = {
-                    viewModel.onEvent(OnCloseRulesDialog)
-                },
+                maxSets = uiState.maxSets,
+                maxScore = uiState.maxScore,
+                servingSide = uiState.servingSide,
+                onDismissRequest = { onCloseRulesDialog() },
                 onSaveClick = { sets, score, servingSide ->
-                    viewModel.onEvent(OnMaxSetsChange(sets))
-                    viewModel.onEvent(OnMaxScoreChange(score))
-                    viewModel.onEvent(OnServingSideChange(servingSide))
-                    viewModel.onEvent(OnCloseRulesDialog)
+                    onChangeRules(sets, score, servingSide)
                 }
             )
         }
 
-        if (uiState.value.showRestartModal) {
+        if (uiState.showRestartModal) {
             RestartGameModal(
-                onRestartClicked = {
-                    viewModel.onEvent(OnRestartGame)
-                    viewModel.onEvent(OnCloseRestartModal)
-                },
+                onRestartClicked = { onRestartGameClicked() },
                 onFinishClicked = {
-                    viewModel.onEvent(OnCloseRestartModal)
-                    viewModel.onEvent(OnFinishGame)
+                    onFinishClicked()
+                    onCloseRestartModal()
                 },
-                onDismissRequest = {
-                    viewModel.onEvent(OnCloseRestartModal)
-                }
+                onDismissRequest = { onCloseRestartModal() }
             )
         }
     }

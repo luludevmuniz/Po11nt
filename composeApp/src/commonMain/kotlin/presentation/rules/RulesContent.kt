@@ -15,6 +15,10 @@ import domain.model.Player
 import domain.model.ServingSide
 import domain.model.ServingSide.Left
 import domain.model.ServingSide.Right
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.max_points
+import po11nt.composeapp.generated.resources.sets
 import presentation.common.CounterField
 import presentation.common.PrimaryButton
 import presentation.common.TransparentExposedDropdownMenuField
@@ -49,7 +53,7 @@ fun RulesContent(
             verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
             CounterField(
-                text = "Sets",
+                text = stringResource(Res.string.sets),
                 value = maxSets,
                 onValueChange = { sets ->
                     onMaxSetsCounterChange(sets)
@@ -59,7 +63,7 @@ fun RulesContent(
                 decreaseTestFlag = RulesScreenTags.DecreaseMaxSetsButton.tag
             )
             CounterField(
-                text = "Pontos da partida",
+                text = stringResource(Res.string.max_points),
                 value = maxScore,
                 onValueChange = { score ->
                     onMaxScoreCounterChange(score)

@@ -10,6 +10,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.open_menu
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,7 +47,7 @@ fun TransparentExposedDropdownMenuField(
                 Icon(
                     modifier = Modifier.rotate(rotation),
                     imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Open menu icon"
+                    contentDescription = stringResource(Res.string.open_menu)
                 )
             }
         )

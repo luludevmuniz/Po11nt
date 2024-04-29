@@ -1,0 +1,45 @@
+<resources>
+    <!-- Start Screen -->
+    <string name="app_name">Po11nt</string>
+    <string name="app_description">Marcador de pontos para partidas de tênis de mesa.</string>
+    <string name="new_game_button">NOVA PARTIDA</string>
+    <string name="version">Versão 1.0.0</string>
+    <string name="privacy_policy">Política de Privacidade</string>
+    <!-- Players Screen -->
+    <string name="players_top_app_bar_title">Jogadores da partida</string>
+    <string name="player_one">Jogador 1</string>
+    <string name="player_one_placeholder">Nome do jogador 1</string>
+    <string name="player_two">Jogador 2</string>
+    <string name="player_two_placeholder">Nome do jogador 2</string>
+    <string name="next_button">PRÓXIMO</string>
+    <!-- Rules Screen -->
+    <string name="rules_top_app_bar_title">Regras da disputa</string>
+    <string name="start_button">INICIAR</string>
+    <string name="start_serving">Inicia sacando</string>
+    <string name="sets">Sets</string>
+    <string name="max_points">Pontos da partida</string>
+    <!-- Common -->
+    <string name="increase_count">Aumentar contagem</string>
+    <string name="decrease_count">Diminuir contagem</string>
+    <string name="close">Fechar</string>
+    <string name="go_back">Voltar</string>
+    <string name="open_menu">Abrir menu</string>
+    <!-- Game Screen -->
+    <string name="restart_game">Reiniciar partida</string>
+    <string name="game_rules">Regras da partida</string>
+    <string name="players_settings">Configuração dos jogadores</string>
+    <string name="receiver">Receptor</string>
+    <string name="service">Serviço</string>
+    <string name="currently_serving">Atualmente servindo</string>
+    <string name="save_button">SALVAR</string>
+    <string name="game_summary">Resumo da partida</string>
+    <string name="done_button">CONCLUIR</string>
+    <string name="continue_button">CONTINUAR</string>
+    <string name="end_match">ENCERRAR PARTIDA</string>
+    <string name="end_match">ENCERRAR PARTIDA</string>
+    <string name="exit_button">SAIR</string>
+    <string name="reset_counter">ZERAR CONTADOR</string>
+    <string name="restart_the_game">Quer reiniciar a partida?</string>
+    <string name="swipe_to_increase_score">Arraste para incrementar ponto</string>
+    <string name="rewind_score">Retroceder ponto</string>
+</resources>

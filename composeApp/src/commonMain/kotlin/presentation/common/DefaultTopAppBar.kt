@@ -9,12 +9,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.go_back
 import po11nt.composeapp.generated.resources.ic_return_white_32dp
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun DefaultTopAppBar(
     modifier: Modifier = Modifier,
@@ -42,7 +42,7 @@ fun DefaultTopAppBar(
         ) {
             Icon(
                 painter = painterResource(Res.drawable.ic_return_white_32dp),
-                contentDescription = "Voltar"
+                contentDescription = stringResource(Res.string.go_back)
             )
         }
         Text(

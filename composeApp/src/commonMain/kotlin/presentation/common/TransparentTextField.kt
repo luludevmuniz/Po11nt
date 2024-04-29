@@ -9,8 +9,6 @@ import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import ui.theme.BlueCharcoal
-import ui.theme.StormGray
 
 @Composable
 fun TransparentTextField(
@@ -55,13 +53,13 @@ fun TransparentTextField(
             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent,
-            unfocusedIndicatorColor = BlueCharcoal
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.surfaceContainerHighest
         ),
         placeholder = {
             Text(
                 text = placeholder,
                 style = MaterialTheme.typography.labelLarge,
-                color = StormGray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         },
         trailingIcon = trailingIcon

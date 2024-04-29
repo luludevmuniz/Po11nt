@@ -1,19 +1,27 @@
 package presentation.rules
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import domain.model.Player
 import domain.model.ServingSide
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.rules_top_app_bar_title
+import po11nt.composeapp.generated.resources.start_button
+import po11nt.composeapp.generated.resources.start_serving
 import presentation.common.DefaultTopAppBar
-import presentation.rules.RulesEvent.*
-import ui.theme.StormGray
 import utils.Orientation
 import utils.Orientation.Horizontal
 import utils.Orientation.Vertical
@@ -21,6 +29,10 @@ import utils.Orientation.Vertical
 @Composable
 fun RulesScreen(
     players: List<Player>,
+    uiState: RulesState,
+    onMaxSetsCounterChange: (Int) -> Unit,
+    onMaxScoreCounterChange: (Int) -> Unit,
+    onWhoStartServingChange: (ServingSide) -> Unit,
     orientation: Orientation,
     onNavigationIconClick: () -> Unit,
     onNextButtonClick: (
@@ -29,14 +41,10 @@ fun RulesScreen(
         startServing: ServingSide
     ) -> Unit
 ) {
-    val viewModel = viewModel {
-        RulesViewModel()
-    }
-    val uiState = viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Regras da disputa",
+                title = stringResource(Res.string.rules_top_app_bar_title),
                 onNavigationIconClick = {
                     onNavigationIconClick()
                 }
@@ -47,11 +55,11 @@ fun RulesScreen(
         RulesContent(
             modifier = Modifier.fillMaxWidth(if (orientation == Horizontal) 0.5f else 1f),
             players = players,
-            maxSets = uiState.value.maxSets,
-            maxScore = uiState.value.maxScore,
-            startServing = uiState.value.startServing,
-            buttonText = "INICIAR",
-            servingText = "Inicia sacando",
+            maxSets = uiState.maxSets,
+            maxScore = uiState.maxScore,
+            startServing = uiState.startServing,
+            buttonText = stringResource(Res.string.start_button),
+            servingText = stringResource(Res.string.start_serving),
             onButtonClick = { maxSets, maxScore, startServing ->
                 onNextButtonClick(
                     maxSets,
@@ -66,18 +74,18 @@ fun RulesScreen(
                             .fillMaxHeight()
                             .padding(horizontal = 16.dp)
                             .width(1.dp)
-                            .background(color = StormGray)
+                            .background(color = MaterialTheme.colorScheme.surfaceContainer)
                     )
                 }
             },
             onMaxSetsCounterChange = { sets ->
-                viewModel.onEvent(OnMaxSetsCounterChange(sets))
+                onMaxSetsCounterChange(sets)
             },
             onMaxScoreCounterChange = { score ->
-                viewModel.onEvent(OnMaxScoreCounterChange(score))
+                onMaxScoreCounterChange(score)
             },
             onWhoStartServingChange = { servingSide ->
-                viewModel.onEvent(OnWhoStartServingChange(servingSide))
+                onWhoStartServingChange(servingSide)
             },
             adaptativeComponent = { content ->
                 when (orientation) {

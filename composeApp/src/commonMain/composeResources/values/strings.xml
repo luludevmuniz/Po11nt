@@ -1,0 +1,44 @@
+<resources>
+    <!-- Start Screen -->
+    <string name="app_name">Po11nt</string>
+    <string name="app_description">Scoreboard for table tennis matches.</string>
+    <string name="new_game_button">NEW GAME</string>
+    <string name="version">Version 1.0.0</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <!-- Players Screen -->
+    <string name="players_top_app_bar_title">Player's of the match</string>
+    <string name="player_one">Player 1</string>
+    <string name="player_one_placeholder">Name of player 1</string>
+    <string name="player_two">Player 2</string>
+    <string name="player_two_placeholder">Name of player 2</string>
+    <string name="next_button">NEXT</string>
+    <!-- Rules Screen -->
+    <string name="rules_top_app_bar_title">Game rules</string>
+    <string name="start_button">START</string>
+    <string name="start_serving">Start serving</string>
+    <string name="sets">Sets</string>
+    <string name="max_points">Max points</string>
+    <!-- Common -->
+    <string name="increase_count">Increase count</string>
+    <string name="decrease_count">Decrease count</string>
+    <string name="close">Close</string>
+    <string name="go_back">Return</string>
+    <string name="open_menu">Open menu</string>
+    <!-- Game Screen -->
+    <string name="restart_game">Restart match</string>
+    <string name="game_rules">Game rules</string>
+    <string name="players_settings">Player's settings </string>
+    <string name="receiver">Receiver</string>
+    <string name="service">Service</string>
+    <string name="currently_serving">Currently serving</string>
+    <string name="save_button">SAVE</string>
+    <string name="game_summary">Match summary</string>
+    <string name="done_button">DONE</string>
+    <string name="continue_button">CONTINUE</string>
+    <string name="end_match">END MATCH</string>
+    <string name="exit_button">EXIT</string>
+    <string name="reset_counter">RESET COUNTER</string>
+    <string name="restart_the_game">Do you want to restart the match?</string>
+    <string name="swipe_to_increase_score">Swipe to score</string>
+    <string name="rewind_score">Rewind score</string>
+</resources>

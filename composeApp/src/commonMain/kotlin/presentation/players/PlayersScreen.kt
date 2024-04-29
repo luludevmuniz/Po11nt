@@ -8,15 +8,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.key.*
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.jetbrains.compose.resources.stringResource
+import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.next_button
+import po11nt.composeapp.generated.resources.players_top_app_bar_title
 import presentation.common.DefaultTopAppBar
 import presentation.common.PrimaryButton
-import presentation.players.PlayersEvent.OnPlayerOneNameChanged
-import presentation.players.PlayersEvent.OnPlayerTwoNameChanged
-import ui.theme.StormGray
 import utils.Orientation
 import utils.Orientation.Horizontal
 import utils.Orientation.Vertical
@@ -26,17 +25,15 @@ import utils.test_tags.PlayersScreenTags
 fun PlayersScreen(
     onNavigationIconClick: () -> Unit,
     onNextButtonClick: (String, String) -> Unit,
+    uiState: PlayersState,
+    onPlayerOneNameChanged: (String) -> Unit,
+    onPlayerTwoNameChanged: (String) -> Unit,
     orientation: Orientation
 ) {
-    val viewModel = viewModel {
-        PlayersViewModel()
-    }
-    val buttonText = "PRÓXIMO"
-    val uiState by viewModel.uiState.collectAsState()
     Scaffold(
         topBar = {
             DefaultTopAppBar(
-                title = "Jogadores da partida",
+                title = stringResource(Res.string.players_top_app_bar_title),
                 onNavigationIconClick = {
                     onNavigationIconClick()
                 }
@@ -47,11 +44,11 @@ fun PlayersScreen(
         PlayersContent(
             playerOneName = uiState.playerOneName,
             playerTwoName = uiState.playerTwoName,
-            onPlayerOneNameChange = { newText ->
-                viewModel.onEvent(OnPlayerOneNameChanged(newText))
+            onPlayerOneNameChange = { name ->
+                onPlayerOneNameChanged(name)
             },
-            onPlayerTwoNameChange = { newText ->
-                viewModel.onEvent(OnPlayerTwoNameChanged(newText))
+            onPlayerTwoNameChange = { name ->
+                onPlayerTwoNameChanged(name)
             }
         ) { content ->
             when (orientation) {
@@ -74,7 +71,7 @@ fun PlayersScreen(
                                 .align(Alignment.End),
                             content = {
                                 Text(
-                                    text = buttonText,
+                                    text = stringResource(Res.string.next_button),
                                     style = MaterialTheme.typography.titleMedium,
                                     color = MaterialTheme.colorScheme.onPrimaryContainer
                                 )
@@ -111,13 +108,13 @@ fun PlayersScreen(
                                     .fillMaxHeight()
                                     .padding(horizontal = 8.dp)
                                     .width(1.dp)
-                                    .background(color = StormGray)
+                                    .background(color = MaterialTheme.colorScheme.surfaceContainerLow)
                             )
                             PrimaryButton(
                                 modifier = Modifier.testTag(PlayersScreenTags.NextButton.tag),
                                 content = {
                                     Text(
-                                        text = buttonText,
+                                        text = stringResource(Res.string.next_button),
                                         style = MaterialTheme.typography.titleMedium,
                                         color = MaterialTheme.colorScheme.onPrimaryContainer
                                     )

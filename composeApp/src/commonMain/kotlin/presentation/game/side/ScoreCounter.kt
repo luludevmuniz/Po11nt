@@ -19,8 +19,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import ui.theme.DarkGrayBlue
-import ui.theme.StormGray
 
 @Composable
 fun ScoreCounter(
@@ -49,9 +47,8 @@ fun ScoreCounter(
                         .weight(1f)
                         .background(
                             color = animateColorAsState(
-                                targetValue = if (
-                                    actualScore >= it) scoreBoxColor
-                                else DarkGrayBlue,
+                                targetValue = if (actualScore >= it) scoreBoxColor
+                                else MaterialTheme.colorScheme.surfaceContainerHighest,
                                 animationSpec = tween(
                                     500,
                                     easing = LinearOutSlowInEasing
@@ -68,12 +65,12 @@ fun ScoreCounter(
             Text(
                 text = actualScore.toString(),
                 style = MaterialTheme.typography.labelLarge,
-                color = StormGray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
                 text = "/$maxScore",
                 style = MaterialTheme.typography.labelSmall,
-                color = StormGray
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }

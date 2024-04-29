@@ -1,6 +1,9 @@
 package presentation.game
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.ui.Modifier
@@ -9,8 +12,6 @@ import domain.model.ServingSide
 import presentation.game.middle.GameMiddleContent
 import presentation.game.side.ScoreCounter
 import presentation.game.top.GameTopContent
-import ui.theme.DarkCyan
-import ui.theme.DarkMagenta
 
 @Composable
 fun GameContent(
@@ -101,8 +102,8 @@ private fun CenterContent(
             rightName = playerTwo.name,
             leftSetScore = playerOne.sets,
             rightSetScore = playerTwo.sets,
-            leftBoxColor = DarkCyan.copy(alpha = 0.2f),
-            rightBoxColor = DarkMagenta.copy(alpha = 0.2f)
+            leftBoxColor = MaterialTheme.colorScheme.secondaryContainer,
+            rightBoxColor = MaterialTheme.colorScheme.tertiaryContainer
         )
 
         GameMiddleContent(
@@ -146,7 +147,7 @@ private fun RowScope.PlayerOneScoreField(
             modifier = Modifier.weight(0.2f),
             actualScore = actualScore,
             maxScore = maxScore,
-            scoreBoxColor = DarkCyan
+            scoreBoxColor = MaterialTheme.colorScheme.secondaryContainer
         )
         SwipeToIncreaseScore(
             modifier = Modifier.weight(0.8f),
@@ -158,7 +159,7 @@ private fun RowScope.PlayerOneScoreField(
                     onPlayerOneScoreRollback()
                 }
             },
-            playerColor = DarkCyan
+            playerColor = MaterialTheme.colorScheme.secondaryContainer
         )
     }
 }
@@ -182,13 +183,13 @@ private fun RowScope.PlayerTwoScoreField(
                     onPlayerTwoScoreRollback()
                 }
             },
-            playerColor = DarkMagenta
+            playerColor = MaterialTheme.colorScheme.tertiaryContainer
         )
         ScoreCounter(
             modifier = Modifier.weight(0.2f),
             actualScore = actualScore,
             maxScore = maxScore,
-            scoreBoxColor = DarkMagenta
+            scoreBoxColor = MaterialTheme.colorScheme.tertiaryContainer
         )
     }
 }

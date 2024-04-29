@@ -155,7 +155,7 @@ class GameViewModel(
         } else {
             val totalScore = _uiState.value.playerOne.score + _uiState.value.playerTwo.score
             when {
-                totalScore % 4 == 0 || totalScore in 1.._uiState.value.maxScore step 4 -> {
+                totalScore % 4 == 0 || totalScore in 1.._uiState.value.maxScore.times(2) step 4 -> {
                     _uiState.update { state ->
                         state.copy(servingSide = _setStartServingSide)
                     }

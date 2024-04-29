@@ -10,14 +10,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.decrease_count
 import po11nt.composeapp.generated.resources.ic_add_green_24dp
 import po11nt.composeapp.generated.resources.ic_remove_24dp
-import ui.theme.BlackPearl
-import ui.theme.BlueCharcoal
-import ui.theme.StormGray
+import po11nt.composeapp.generated.resources.increase_count
 
 @Composable
 fun CounterField(
@@ -55,12 +54,11 @@ fun CounterField(
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 0.5.dp,
-            color = BlueCharcoal
+            color = MaterialTheme.colorScheme.surfaceContainerHighest
         )
     }
 }
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 private fun Counter(
     value: Int,
@@ -71,11 +69,11 @@ private fun Counter(
     ) {
     var adding by remember { mutableStateOf(false) }
     val decreaseIconColor = animateColorAsState(
-        if (value == 1) StormGray
+        if (value == 1) MaterialTheme.colorScheme.surfaceContainerHighest
         else MaterialTheme.colorScheme.primary
     )
     Row(
-        modifier = Modifier.background(color = BlackPearl),
+        modifier = Modifier.background(color = MaterialTheme.colorScheme.surfaceContainer),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -90,7 +88,7 @@ private fun Counter(
                     }
                 }
                 .padding(4.dp),
-            contentDescription = "Diminuir contagem",
+            contentDescription = stringResource(Res.string.decrease_count),
             tint = decreaseIconColor.value
         )
         AnimatedContent(
@@ -125,7 +123,7 @@ private fun Counter(
                     onValueChange(value.plus(1))
                 }
                 .padding(4.dp),
-            contentDescription = "Aumentar contagem",
+            contentDescription = stringResource(Res.string.increase_count),
             tint = MaterialTheme.colorScheme.primary
         )
     }

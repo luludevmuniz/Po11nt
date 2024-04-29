@@ -5,7 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,12 +21,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import po11nt.composeapp.generated.resources.Res
+import po11nt.composeapp.generated.resources.app_description
+import po11nt.composeapp.generated.resources.new_game_button
 import po11nt.composeapp.generated.resources.po11nt_logo
+import po11nt.composeapp.generated.resources.privacy_policy
+import po11nt.composeapp.generated.resources.version
 import presentation.common.PrimaryButton
-import ui.theme.StormGray
+import utils.PRIVACY_POLICY_URL
 import utils.test_tags.StartScreenTags
 
 @Composable
@@ -73,10 +81,11 @@ private fun AppInfoSide(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .widthIn(max = 191.dp)
                 .padding(top = 8.dp),
-            text = "Marcador de pontos para partidas de tênis de mesa.",
+            text = stringResource(Res.string.app_description),
+            textAlign = TextAlign.Center,
             style = MaterialTheme.typography.labelLarge,
             fontWeight = FontWeight.Light,
-            color = StormGray
+            color = MaterialTheme.colorScheme.onSurface
         )
     }
 }
@@ -87,52 +96,48 @@ fun NewGameSide(
     onNewGamePressed: () -> Unit
 ) {
     val uriHandler = LocalUriHandler.current
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+    Box(
+        modifier = modifier
     ) {
-        Box(
-            modifier = Modifier.weight(1f),
-            contentAlignment = Alignment.Center
-        ) {
-            PrimaryButton(
-                modifier = Modifier.testTag(StartScreenTags.NewGameButton.tag),
-                content = {
-                    Text(
-                        text = "NOVA PARTIDA",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                },
-                onClick = {
-                    onNewGamePressed()
-                }
-            )
-        }
-        Text(
-            modifier = Modifier.padding(
-                top = 10.dp,
-                bottom = 16.dp
-            ),
-            text = "Versão 1.0.0",
-            style = MaterialTheme.typography.labelMedium,
-            color = StormGray
-        )
-        TextButton(
-            modifier = Modifier.padding(
-                top = 10.dp,
-                bottom = 16.dp
-            ),
+        PrimaryButton(
+            modifier = Modifier
+                .align(Alignment.Center)
+                .testTag(StartScreenTags.NewGameButton.tag),
+            content = {
+                Text(
+                    text = stringResource(Res.string.new_game_button),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            },
             onClick = {
-                uriHandler.openUri(uri = "https://sites.google.com/view/po11nt")
+                onNewGamePressed()
             }
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .align(Alignment.BottomCenter)
+                .padding(bottom = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
-                text = "Política de Privacidade",
+                text = stringResource(Res.string.version),
                 style = MaterialTheme.typography.labelMedium,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onSurface
             )
+            TextButton(
+                onClick = {
+                    uriHandler.openUri(uri = PRIVACY_POLICY_URL)
+                }
+            ) {
+                Text(
+                    text = stringResource(Res.string.privacy_policy),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
         }
     }
 }
